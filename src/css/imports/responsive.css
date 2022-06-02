@@ -1,0 +1,26 @@
+@media all and (max-width:810px) {
+    .main-body,.about-main {
+        width: 100%;
+    }
+    .about-main .description-text{
+        padding: 1.5rem;
+    }
+}
+
+@media all and (max-width:400px) {
+    .app-title {
+        font-size: 2.5rem;
+    }
+}
+
+@media all and (max-width:340px) {
+    .form-container {
+        width: 90%;
+    }
+}
+
+@media all and (max-width:286px) {
+    .nav-title {
+        display: none;
+    }
+}

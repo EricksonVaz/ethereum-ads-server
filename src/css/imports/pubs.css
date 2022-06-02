@@ -1,0 +1,26 @@
+.pub-list{
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 5rem;
+    flex-wrap: wrap;
+}
+
+.pub-list .pub-card{
+    padding: .5rem;
+    box-shadow: 1px 0 3px gainsboro,-1px 0 3px gainsboro,0 1px 3px gainsboro,0 -1px 3px gainsboro;
+    border-radius: 3px;
+}
+
+.pub-list .goal-pub{
+    font-size: 1.6rem;
+    margin: 1rem;
+}
+
+.btn-earn{
+    padding: 1rem;
+    border: 1px solid transparent;
+    color: aliceblue;
+    background-color: blueviolet;
+    font-weight: bold;
+}

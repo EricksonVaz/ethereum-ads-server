@@ -1,0 +1,37 @@
+.main-nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5rem;
+    background-color: #fff;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+}
+.main-nav .nav-menu{
+    display: flex;
+}
+.main-nav .nav-link{
+    font-size: 1.8rem;
+    padding: 1rem;
+    font-weight: bold;
+    color: rgb(141, 141, 141);
+}
+.main-body{
+    width: 800px;
+    margin-top: 5rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding: 1rem;
+}
+.nav-link-main{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #fff;
+    text-shadow: 1px 0 3px rgb(95, 88, 135),-1px 0 3px rgb(95, 88, 135),0 1px 3px rgb(95, 88, 135),0 -1px 3px rgb(95, 88, 135);
+}
+.app-title{
+    font-size: 3.5rem;
+    text-shadow: 2px 0 0 rgb(50, 41, 100),-2px 0 0 rgb(50, 41, 100),0 2px 0 rgb(50, 41, 100),0 -2px 0 rgb(50, 41, 100);
+    color: #fff;
+}

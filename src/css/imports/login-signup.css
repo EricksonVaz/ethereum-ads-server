@@ -1,0 +1,52 @@
+.form-container{
+    border: 1px solid gainsboro;
+    width: 300px;
+    padding: 1.5rem;
+    text-align: center;
+    margin: 5rem auto;
+    border-radius: 5px;
+}
+.form-container .form-title{
+    font-size: 3rem;
+    padding: 1rem;
+    color: rgb(141, 141, 141);
+}
+.form-container .form-group{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 1rem 0;
+}
+.form-container .form-control{
+    padding: .5rem;
+    font-size: 1.5rem;
+    border: 1px solid rgb(198, 198, 198);
+    width: 100%;
+}
+.form-container .form-control:focus{
+    outline: none;
+}
+.form-container label{
+    font-size: 1.6rem;
+}
+.form-container .btn{
+    font-size: 1.8rem;
+    display: inline-block;
+    padding: 1rem;
+    background-color: blueviolet;
+    color: aliceblue;
+    border: 1px solid transparent;
+    margin-top: 2rem;
+}
+.form-container .form-link{
+    color: rgb(142, 98, 182);
+    font-size: 1.3rem;
+    margin-top: 2rem;
+}
+.form-link a:hover{
+    text-decoration: underline;
+}
+.form-feedback{
+    color: tomato;
+    font-size: 1.3rem;
+}

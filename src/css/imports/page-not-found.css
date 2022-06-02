@@ -1,0 +1,28 @@
+.container-page-not-found{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 4rem;
+}
+
+.container-page-not-found .app-title{
+    font-size: 2.5rem;
+    margin-top: 5rem;
+}
+
+.container-page-not-found .btn-nav{
+    font-size: 1.8rem;
+    display: inline-block;
+    padding: 1rem 4rem;
+    background-color: blueviolet;
+    color: aliceblue;
+    margin-top: 2rem;
+}
+.container-page-not-found .error-title{
+    margin-top: 8rem;
+}
+.error-title,.error-sub-title{
+    color: rgb(141, 141, 141);
+}
