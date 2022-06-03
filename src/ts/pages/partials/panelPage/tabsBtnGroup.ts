@@ -1,3 +1,4 @@
+import formEditCampain from "./formEditCampain";
 import tabCampainsActive from "./tabCampainsActive";
 import tabCreateCampain from "./tabCreateCampain";
 import tabPastCampains from "./tabPastCampains";
@@ -11,6 +12,7 @@ export default function tabsBtnGroup(){
                 <button type="button" class="tab-btn" data-tab="past-campains">Campanhas Enceradas</button>
             </div>
             <div class="tab-pane-container">
+                ${formEditCampain()}
                 ${tabCreateCampain()}
                 ${tabCampainsActive()}
                 ${tabPastCampains()}

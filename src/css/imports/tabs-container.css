@@ -24,7 +24,7 @@
     background-color: blueviolet;
     color: aliceblue;
 }
-.form-create-campain{
+.form-create-campain,.form-edit-campain{
     border: 1px solid gainsboro;
     padding: 1rem;
     margin-top: 1.5rem;
@@ -34,7 +34,7 @@
     width: 50%;
     padding-right: .5rem;
 }
-.form-create-campain textarea{
+.form-create-campain textarea,.form-edit-campain textarea{
     height: 150px;
     resize: none;
 }
@@ -45,4 +45,20 @@
 }
 .tab-pane.hide{
     display: none;
+}
+.more-action-buttons{
+    display: flex;
+    gap: 1rem;
+    padding-left: .5rem;
+    padding-right: .5rem;
+    margin-top: .5rem;
+}
+.more-action-buttons .btn-action{
+    flex-grow: 1;
+    border: 2px solid blueviolet;
+    background-color: transparent;
+    transition: background-color .3s;
+}
+.more-action-buttons .btn-action:hover{
+    background-color: blueviolet;
 }

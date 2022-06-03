@@ -8,12 +8,12 @@ export default function loginForm(){
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" name="email">
-                <div class="form-feedback">Feedback aqui</div>
+                <input type="email" class="form-control" name="email" required>
+                <div class="form-feedback"></div>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" name="password">
+                <input type="password" class="form-control" name="password" required>
                 <div class="form-feedback"></div>
             </div>
             <button type="submit" class="btn">Entrar</button>

@@ -1,9 +1,11 @@
 export default abstract class PageBase{
     protected rootElementPageContainer:HTMLDivElement;
+    protected isFirstLoad:boolean;
     constructor(protected componentsHTMLString:string,public rootPageElementId:string){
         this.rootElementPageContainer = document.createElement('div');
         this.rootElementPageContainer.id = rootPageElementId;
         this.rootElementPageContainer.insertAdjacentHTML("beforeend",this.componentsHTMLString);
+        this.isFirstLoad = true;
     }
 
     public render(appRootElement:HTMLDivElement){

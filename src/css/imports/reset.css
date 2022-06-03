@@ -22,3 +22,6 @@ a,button,a:hover,button:hover{
 ul,li{
     list-style: none;
 }
+.d-none{
+    display: none!important;
+}

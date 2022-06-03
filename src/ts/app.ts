@@ -4,6 +4,7 @@ import PageIndex from "./pages/pageIndex";
 import PageLogin from "./pages/pageLogin";
 import PagePanel from "./pages/pagePanel";
 import PageSignup from "./pages/pageSignup";
+import loaderInit from "./pages/partials/loader/loaderInit";
 import backdrop from "./pages/partials/modals/backdrop";
 import modalsLoader from "./pages/partials/modals/modalsLoader";
 import Router from "./router";
@@ -39,6 +40,9 @@ import Router from "./router";
             page: new PageSignup()
         }
     ]);
+    router.protectedPaths = ["/panel"];
+    router.restrictPaths = ["/login","/signup"];
     router.resolve();
     modalsLoader(appRootElement);
+    loaderInit(appRootElement);
 })(document.querySelector("#app")! as HTMLDivElement);

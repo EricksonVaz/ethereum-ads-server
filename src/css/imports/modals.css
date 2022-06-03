@@ -13,11 +13,30 @@
     background-color: white;
     border-radius: 5px;
     z-index: 1;
-    top: 25%;
+    top: -30%;
     left: 50%;
     transform: translate(-50%,-50%);
+    transition: top .4s;
+}
+.modal.show{
+    top: 20%;
 }
 .modal-header{
     position: relative;
     border-bottom: 2px solid rgb(175, 175, 175);
+}
+.modal-header .close{
+    position: absolute;
+    font-size: 3rem;
+    cursor: pointer;
+    font-weight: bold;
+    top: -5px;
+    right: 0;
+    color: rgb(152, 152, 152);
+}
+.modal-header .modal-title{
+    font-size: 2.5rem;
+}
+.modal-body{
+    font-size: 1.5rem;
 }
