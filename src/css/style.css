@@ -1,7 +1,10 @@
 @import "imports/reset.css";
+@import "imports/modals.css";
 @import "imports/main-nav.css";
 @import "imports/pubs.css";
 @import "imports/about-page.css";
+@import "imports/forms-global.css";
 @import "imports/login-signup.css";
 @import "imports/page-not-found.css";
 @import "imports/responsive.css";
+@import "imports/tabs-container.css";

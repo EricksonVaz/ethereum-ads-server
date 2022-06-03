@@ -2,7 +2,10 @@ import Page404 from "./pages/page404";
 import PageAbout from "./pages/pageAbout";
 import PageIndex from "./pages/pageIndex";
 import PageLogin from "./pages/pageLogin";
+import PagePanel from "./pages/pagePanel";
 import PageSignup from "./pages/pageSignup";
+import backdrop from "./pages/partials/modals/backdrop";
+import modalsLoader from "./pages/partials/modals/modalsLoader";
 import Router from "./router";
 
 (function(appRootElement:HTMLDivElement){
@@ -24,6 +27,10 @@ import Router from "./router";
             page: new PageAbout()
         },
         {
+            path: "/panel",
+            page: new PagePanel()
+        },
+        {
             path: "/login",
             page: new PageLogin()
         },
@@ -33,4 +40,5 @@ import Router from "./router";
         }
     ]);
     router.resolve();
+    modalsLoader(appRootElement);
 })(document.querySelector("#app")! as HTMLDivElement);

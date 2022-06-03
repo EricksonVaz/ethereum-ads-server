@@ -14,7 +14,7 @@
 }
 
 @media all and (max-width:340px) {
-    .form-container {
+    .form-login,.form-signup {
         width: 90%;
     }
 }

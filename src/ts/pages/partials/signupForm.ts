@@ -22,7 +22,7 @@ export default function signupForm(){
                 <div class="form-feedback"></div>
             </div>
             <button type="submit" class="btn">Registrar</button>
-            <h4 class="form-link">Já tenho uma conta: <a data-href="/signup">Realizar Login</a></h4>
+            <h4 class="form-link">Já tenho uma conta: <a data-href="/login">Realizar Login</a></h4>
         </form>
     `;
 }

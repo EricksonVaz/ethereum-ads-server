@@ -1,0 +1,43 @@
+.form-container .form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 1rem 0;
+}
+
+.form-container .form-control {
+    padding: .5rem;
+    font-size: 1.5rem;
+    border: 1px solid rgb(198, 198, 198);
+    width: 100%;
+}
+
+.form-container .form-control:focus {
+    outline: none;
+}
+
+.form-container label {
+    font-size: 1.6rem;
+}
+
+.form-container .btn {
+    font-size: 1.8rem;
+    display: inline-block;
+    padding: 1rem;
+    background-color: blueviolet;
+    color: aliceblue;
+    border: 1px solid transparent;
+    margin-top: 2rem;
+}
+.form-group-inline{
+    display: flex;
+    gap: 1rem;
+}
+.form-group-inline .form-group{
+    flex-grow: 1;
+}
+
+.form-feedback {
+    color: tomato;
+    font-size: 1.3rem;
+}

@@ -58,12 +58,12 @@ export default class Router {
 
             if(routeFound){
                 if(this._protectedPaths.includes(routeFound.path)){
-                    this.loadRoute(this.loginPage)?.page.render(this.rootElement);
+                    this.loadRoute(this.loginPage)?.page.render(this.rootElement).init();
                 }else{
-                    routeFound.page.render(this.rootElement);
+                    routeFound.page.render(this.rootElement).init();
                 }
             }else{
-                this.loadRoute(this.notFoundPage)?.page.render(this.rootElement);
+                this.loadRoute(this.notFoundPage)?.page.render(this.rootElement).init();
             }
 
             this.addNavLinkActions();

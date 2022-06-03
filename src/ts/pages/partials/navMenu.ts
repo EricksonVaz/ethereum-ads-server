@@ -14,6 +14,9 @@ export default function navMenu(){
                 <li class="nav-item">
                     <a class="nav-link" data-href="/login">Login</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-href="/panel">Painel</a>
+                </li>
             </ul>
         </nav>
     `;

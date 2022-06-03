@@ -8,6 +8,7 @@ export default abstract class PageBase{
 
     public render(appRootElement:HTMLDivElement){
         appRootElement.insertAdjacentElement("beforeend", this.rootElementPageContainer);
+        return this
     }
 
     public abstract init():void;

@@ -1,0 +1,48 @@
+.tabs-container{
+    width: 800px;
+    margin-top: 5rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding: 1rem;
+}
+.tabs-container .tabs-btn-group{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+.tabs-container .tab-btn{
+    padding: 1rem;
+    border: 3px solid blueviolet;
+    color: blueviolet;
+    background-color: transparent;
+    font-weight: bold;
+    transition: all .3s;
+}
+.tabs-container .tab-btn:hover,.tabs-container .tab-btn.active{
+    background-color: blueviolet;
+    color: aliceblue;
+}
+.form-create-campain{
+    border: 1px solid gainsboro;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border-radius: 5px;
+}
+.form-create-campain .control-name-campain{
+    width: 50%;
+    padding-right: .5rem;
+}
+.form-create-campain textarea{
+    height: 150px;
+    resize: none;
+}
+.form-create-campain .btn-action-group{
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+.tab-pane.hide{
+    display: none;
+}
