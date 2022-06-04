@@ -5,9 +5,13 @@ import aboutMainBody from "./partials/aboutPage/aboutMainBody";
 export default class PageAbout extends PageBase{
     static readonly rootPageId = "about-page";
     constructor(){
-        super(navMenu()+aboutMainBody(),PageAbout.rootPageId);
+        super(PageAbout.rootPageId);
     }
 
-    public init(): void {
+    public init(appRootElement:HTMLDivElement): PageBase {
+        this.appRootElement = appRootElement;
+        this.addComponents(navMenu()+aboutMainBody());
+
+        return this;
     }
 }

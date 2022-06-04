@@ -1,4 +1,5 @@
 import User from "./models/user";
+import { refreshNavMenuState } from "./pages/partials/navMenu";
 import IRoutes from "./utils/interfaces/iRoutes";
 
 export default class Router {
@@ -7,6 +8,7 @@ export default class Router {
     public readonly userHomePage = "/panel";
     private readonly notFoundPage = "/not-found";
     private readonly loginPage = "/login";
+    private readonly basePath = "/";
     static router:Router;
     private isFirstLoad:boolean = true;
 
@@ -23,7 +25,7 @@ export default class Router {
     public resolve(){
         let currentPathName = window.location.pathname;
         this.navigateTo(currentPathName);
-        this.addNavLinkActions();
+        //this.addNavLinkActions();
     }
 
     private addNavLinkActions(){
@@ -52,43 +54,41 @@ export default class Router {
 
         let linkElement = e.target as HTMLLinkElement;
         let dataHref = linkElement.dataset.href;
-        console.log(linkElement);
         this.navigateTo(dataHref!);
     }
 
     public navigateTo(pathName:string){
         if(pathName==="/logout"){
-            this.updateUrl("/");
-            User.status = "logoff";
-            this.loadRoute(pathName)?.page.render(this.rootElement).init();
+            User.logOut();
+            
+            this.renderPage(this.basePath);
         }else if(this.isFirstLoad || window.location.pathname!=pathName){
-            this.rootElement.querySelector(".main-nav")?.addEventListener("click",(e)=>{
-                let elementClicked = e.target as HTMLElement;
-
-                if(elementClicked.matches("[data-href]")){
-                    this.onNavClickLink(e);
-                }
-            });
-            this.rootElement.innerHTML = "";
             this.updateUrl(pathName);
             let routeFound = this.loadRoute(pathName);
-            console.log(this.routes);
             
             if(routeFound){
-                if(User.status=="logoff" && this._protectedPaths.includes(routeFound.path)){
+                if(!User.isUserLogged() && this._protectedPaths.includes(routeFound.path)){
                     this.updateUrl(this.loginPage);
-                    this.loadRoute(this.loginPage)?.page.render(this.rootElement).init();
-                }if(User.status=="logged" && this._restrictPaths.includes(routeFound.path)){
+                    this.loadRoute(this.loginPage)?.page.init(this.rootElement).render();
+                }else if(User.isUserLogged() && this._restrictPaths.includes(routeFound.path)){
                     this.updateUrl(this.userHomePage);
-                    this.loadRoute(this.userHomePage)?.page.render(this.rootElement).init();
+                    this.loadRoute(this.userHomePage)?.page.init(this.rootElement).render();
                 }else{
-                    routeFound.page.render(this.rootElement).init();
+                    routeFound.page.init(this.rootElement).render();
                 }
             }else{
-                this.loadRoute(this.notFoundPage)?.page.render(this.rootElement).init();
+                this.loadRoute(this.notFoundPage)?.page.init(this.rootElement).render();
             }
 
             this.addNavLinkActions();
+            refreshNavMenuState((navMenu:HTMLElement)=>{
+                navMenu.addEventListener("click",(e)=>{
+                    let elementClicked = e.target as HTMLElement;
+                    if(elementClicked.matches("[data-href]")){
+                        this.onNavClickLink(e);
+                    }
+                });
+            });
         }
     }
 
@@ -102,5 +102,19 @@ export default class Router {
             pathName,
             window.location.origin + pathName
         );
+    }
+
+    public renderPage(pathName:string){
+        this.updateUrl(pathName);
+        this.loadRoute(pathName)?.page.init(this.rootElement).render();
+
+        refreshNavMenuState((navMenu:HTMLElement)=>{
+            navMenu.addEventListener("click",(e)=>{
+                let elementClicked = e.target as HTMLElement;
+                if(elementClicked.matches("[data-href]")){
+                    this.onNavClickLink(e);
+                }
+            });
+        });
     }
 }

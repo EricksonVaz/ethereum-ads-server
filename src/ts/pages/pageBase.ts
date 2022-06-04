@@ -1,17 +1,22 @@
 export default abstract class PageBase{
-    protected rootElementPageContainer:HTMLDivElement;
+    protected rootElementPageContainer?:HTMLDivElement;
     protected isFirstLoad:boolean;
-    constructor(protected componentsHTMLString:string,public rootPageElementId:string){
-        this.rootElementPageContainer = document.createElement('div');
-        this.rootElementPageContainer.id = rootPageElementId;
-        this.rootElementPageContainer.insertAdjacentHTML("beforeend",this.componentsHTMLString);
+    protected appRootElement?:HTMLDivElement;
+
+    constructor(public rootPageElementId:string){
         this.isFirstLoad = true;
     }
 
-    public render(appRootElement:HTMLDivElement){
-        appRootElement.insertAdjacentElement("beforeend", this.rootElementPageContainer);
-        return this
+    public render(){
+        this.appRootElement!.insertAdjacentElement("beforeend", this.rootElementPageContainer!);
     }
 
-    public abstract init():void;
+    public addComponents(componentsHTMLString:string){
+        this.appRootElement!.innerHTML = "";
+        this.rootElementPageContainer = document.createElement('div');
+        this.rootElementPageContainer.id = this.rootPageElementId;
+        this.rootElementPageContainer.insertAdjacentHTML("beforeend",componentsHTMLString);
+    }
+
+    public abstract init(appRootElement:HTMLDivElement):PageBase;
 }

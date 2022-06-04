@@ -21,7 +21,7 @@ function loadNavMenuItem(){
                 <a class="nav-link" data-href="/about">Sobre</a>
             </li>
             ${(function(){
-                if(User.status==="logged") return `
+                if(User.isUserLogged()) return `
                     <li class="nav-item">
                         <a class="nav-link" data-href="/panel">Painel</a>
                     </li>
@@ -39,7 +39,8 @@ function loadNavMenuItem(){
     `;
 }
 
-export function refreshNavMenuState(){
+export function refreshNavMenuState(callbackAddEventNav:Function){
     let navMenu = document.body.querySelector(".main-nav") as HTMLElement;
     navMenu.innerHTML = loadNavMenuItem();
+    callbackAddEventNav(navMenu);
 }

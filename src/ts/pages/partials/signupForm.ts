@@ -9,7 +9,7 @@ export default function signupForm(){
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" class="form-control" name="email">
-                <div class="form-feedback">Feedback aqui</div>
+                <div class="form-feedback"></div>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
@@ -18,7 +18,7 @@ export default function signupForm(){
             </div>
             <div class="form-group">
                 <label for="confirm">Confirmar Password</label>
-                <input type="confirm" class="form-control" name="confirm">
+                <input type="password" class="form-control" name="confirm">
                 <div class="form-feedback"></div>
             </div>
             <button type="submit" class="btn">Registrar</button>
