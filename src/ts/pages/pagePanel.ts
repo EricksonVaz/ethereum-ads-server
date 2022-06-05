@@ -4,10 +4,13 @@ import navMenu from "./partials/navMenu";
 import tabsBtnGroup from "./partials/panelPage/tabsBtnGroup";
 import swal from 'sweetalert';
 import { hideLoader, showLoader } from "./partials/loader/loaderInit";
+import Campaigns from "../models/campaigns";
+import formSetFeedback from "../utils/formSetFeedback";
 
 export default class PagePanel extends PageBase{
     static readonly rootPageId = "panel-page";
     private formEditCampain?:HTMLFormElement;
+    private formCreateCampain?:HTMLFormElement;
     constructor(){
         super(PagePanel.rootPageId);
     }
@@ -17,9 +20,11 @@ export default class PagePanel extends PageBase{
         this.addComponents(navMenu()+tabsBtnGroup());
 
         this.formEditCampain = this.rootElementPageContainer!.querySelector<HTMLFormElement>(".form-edit-campain")!;
+        this.formCreateCampain = this.rootElementPageContainer!.querySelector<HTMLFormElement>(".form-create-campain")!;
 
         this.addEventToggleTabs();
         this.openModalShowDetails();
+        this.addEventCreateNewCampain();
         this.addEventCancelEditCampain();
 
         return this;
@@ -73,6 +78,28 @@ export default class PagePanel extends PageBase{
                     swal(`editar pub ${idPub}`);
                 },3000);
             }
+        });
+    }
+
+    private addEventCreateNewCampain(){
+        this.formCreateCampain?.addEventListener("submit",(e)=>{
+            e.preventDefault();
+
+            let formData = new FormData(this.formCreateCampain);
+            let campaign = new Campaigns(formData);
+            try{
+                let errorObj = campaign.assignUser();
+
+                if(errorObj.length){
+                    formSetFeedback(this.formCreateCampain!,errorObj);
+                }else{
+                    //create campaing
+                    alert("criar camapanha");
+                }
+            }catch(err){
+                console.log(err);
+            }
+
         });
     }
 

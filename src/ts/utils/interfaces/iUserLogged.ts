@@ -1,5 +1,6 @@
 export default interface IUserLogged{
-   idUser:number;
+   id:number;
    email:string;
    password:string;
+   iat:number;
 }

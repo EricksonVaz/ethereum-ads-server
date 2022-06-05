@@ -6,25 +6,22 @@ import ManageStorage from "../utils/manageStorage";
 import Web3Obj from "../utils/web3Obj";
 import UserContractJson from "../../../build/contracts/Users.json";
 import swal from "sweetalert";
+import { Contract } from "web3-eth-contract";
+import FormBaseModal from "./formBase";
 
-export default class User{
+export default class User extends FormBaseModal{
     public idUser:string = "";
     public email:string = "";
     public password:string = "";
     private passwordHashed:string = "";
     private confirm:string = "";
-    private errorFeedback:IFormError[] = [];
     //private static contractJson = new URL("../../../build/contracts/Users.json",import.meta.url);
 
     private readonly regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    private static objsUserLogged:IUserLogged = {
-        idUser:1,
-        email:"ericksoncv1@outlook.com",
-        password:passwordHash.generate("123456")
-    }
+    constructor(protected formData:FormData){
+        super(formData);
 
-    constructor(private formData:FormData){
         this.email = this.getFormValue("email");
         this.password = this.getFormValue("password");
         this.confirm = this.getFormValue("confirm");
@@ -32,68 +29,63 @@ export default class User{
         this.validateFormData();
     }
 
-    static async contract(){
-       let web3Obj = new Web3Obj();
-       let web3 = await web3Obj.initWeb3()
-       Web3Obj.web3 = web3;
-       return await web3Obj.initContract(UserContractJson);
-    }
-
-    async signup():Promise<IFormError[]|User>{
+    async signup(){
         if(this.errorFeedback.length) return this.errorFeedback
         else{
             this.passwordHashed = passwordHash.generate(this.password)
-            let userObj:IUserLogged = {
-                idUser:2,
-                email:this.email,
-                password:this.passwordHashed
-            };
-
-            let contractUser = await User.contract();
-            let result:[number,string,string]|string
-            try{
-                result = await contractUser.methods
-                .findByEmail(this.email)
-                .call() as [number,string,string];
-
-                return [{
-                    formControl:"email",
-                    errorFeedback:"este user já foi registrado",
-                    currentValue:this.email
-                }];
-            }catch{
+            
+            return Web3Obj.contract(UserContractJson)
+            .then(async (contractResp)=>{
+                let contractUser = contractResp as Contract;
+                let result:[number,string,string]|string
                 try{
-                    await contractUser.methods
-                    .signup(this.email,this.passwordHashed)
-                    .send({from: Web3Obj.accounts[0],gas: 200000});
+                    result = await contractUser.methods
+                    .findByEmail(this.email)
+                    .call() as [number,string,string];
 
-                    let idUserRegister = await contractUser.methods.nextIdUser().call();
-                    this.idUser = idUserRegister;
-
-                    return this;
-                }catch(e){
-                    swal({
-                        title:"Ooops!!!",
-                        text:"Erro ao resgistar na blockchain",
-                        icon:"error"
-                    });
-                    console.log(e)
                     return [{
                         formControl:"email",
-                        errorFeedback:"erro ao resgistar na blockchain",
+                        errorFeedback:"este user já foi registrado",
                         currentValue:this.email
                     }];
+                }catch{
+                    try{
+                        await contractUser.methods
+                        .signup(this.email,this.passwordHashed)
+                        .send({from: Web3Obj.accounts[0],gas: 200000});
+
+                        let idUserRegister = await contractUser.methods.nextIdUser().call();
+                        this.idUser = idUserRegister;
+
+                        return this;
+                    }catch(e){
+                        swal({
+                            title:"Ooops!!!",
+                            text:"Erro ao resgistar na blockchain",
+                            icon:"error"
+                        });
+                        console.log(e)
+                        return [{
+                            formControl:"email",
+                            errorFeedback:"erro ao resgistar na blockchain",
+                            currentValue:this.email
+                        }];
+                    }
                 }
-            }
+            })
+            .catch((e)=>{
+                console.log(e);
+                return [{
+                    formControl:"email",
+                    errorFeedback:"erro ao resgistar na blockchain",
+                    currentValue:this.email
+                }];
+            });
         }
 
     }
 
-    private getFormValue(formConrol:string):string{
-        return (this.formData.get(formConrol) as string) ?? "";
-    }
-
-    private validateFormData(){
+    protected validateFormData():void{
         if(!this.email){
             this.errorFeedback.push({
                 formControl:"email",
@@ -138,68 +130,86 @@ export default class User{
 
     static async login(_email:string,_password:string):Promise<IFormError[]>{
         let errorFeedback:IFormError[] = [];
-        let contractUser = await User.contract();
 
-        try{
-            let resp =  await contractUser.methods.findByEmail(_email).call() as any;
-            let idUser=resp["0"],email = resp["1"],password=resp["2"];
+        return Web3Obj.contract(UserContractJson)
+        .then(async (contractResp)=>{
+            let contractUser = contractResp as Contract;
+            try{
+                let resp =  await contractUser.methods.findByEmail(_email).call() as any;
+                let idUser=resp["0"],email = resp["1"],password=resp["2"];
 
-            if(!_email){
-                errorFeedback.push({
-                    formControl:"email",
-                    errorFeedback:"email é obrigatorio",
-                    currentValue:_email
-                });
-            }
-
-            if(!_password){
-                errorFeedback.push({
-                    formControl:"password",
-                    errorFeedback:"password é obrigatorio",
-                    currentValue:_password
-                }); 
-            }
-
-            if(_email && _password){
-                let verifyPassword = passwordHash.verify(_password,password);
-
-                if(_email=== email && verifyPassword){
-                    let loginHash = AuthJWT.authJWT.generateToken({id:idUser,email,password});
-                
-                    ManageStorage.saveValue("loggedUserHash",loginHash);
-                    
-                }else{
+                if(!_email){
                     errorFeedback.push({
                         formControl:"email",
-                        errorFeedback:"email ou password incorrecto",
-                        currentValue:email
+                        errorFeedback:"email é obrigatorio",
+                        currentValue:_email
                     });
                 }
+
+                if(!_password){
+                    errorFeedback.push({
+                        formControl:"password",
+                        errorFeedback:"password é obrigatorio",
+                        currentValue:_password
+                    }); 
+                }
+
+                if(_email && _password){
+                    let verifyPassword = passwordHash.verify(_password,password);
+
+                    if(_email=== email && verifyPassword){
+                        let loginHash = AuthJWT.authJWT.generateToken({id:idUser,email,password});
+                    
+                        ManageStorage.saveValue("loggedUserHash",loginHash);
+                        
+                    }else{
+                        errorFeedback.push({
+                            formControl:"email",
+                            errorFeedback:"email ou password incorrecto",
+                            currentValue:email
+                        });
+                    }
+                }
+            }catch(e){
+                errorFeedback.push({
+                    formControl:"email",
+                    errorFeedback:"este email não existe",
+                    currentValue:_email
+                });
+                console.log("blockchain error login",e)
             }
-        }catch(e){
+
+            return errorFeedback;
+
+        }).catch(e=>{
             errorFeedback.push({
                 formControl:"email",
-                errorFeedback:"este email não existe",
+                errorFeedback:"erro conexao",
                 currentValue:_email
             });
-            console.log("blockchain error login",e)
-        }
-
-        return errorFeedback;
+            console.log("blockchain error conexao",e);
+            return errorFeedback;
+        });
     }
 
     static isUserLogged():boolean{
         let loggedUserHashObj = ManageStorage.getValueSaved("loggedUserHash");
+        console.log("JWT",AuthJWT.authJWT.decodeToken(loggedUserHashObj));
 
         if(loggedUserHashObj){
             let loggedUserObj = AuthJWT.authJWT.decodeToken(loggedUserHashObj);
-            console.log("JWT",AuthJWT.authJWT.decodeToken(loggedUserHashObj));
             if(
                 loggedUserObj.hasOwnProperty("id") && 
                 loggedUserObj.hasOwnProperty("email") && 
-                loggedUserObj.hasOwnProperty("password")
+                loggedUserObj.hasOwnProperty("password") &&
+                loggedUserObj.hasOwnProperty("iat")
             ){
-                return true;
+                let {id,email,password,iat} = loggedUserObj as IUserLogged;
+                let loginHashVerify = AuthJWT.authJWT.generateToken({id,email,password,iat});
+
+                if(loginHashVerify == loggedUserHashObj){
+                    return true;
+                }
             }
 
             User.logOut();

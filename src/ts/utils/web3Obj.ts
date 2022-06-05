@@ -1,4 +1,6 @@
+import swal from "sweetalert";
 import Web3 from "web3";
+import { Contract } from "web3-eth-contract";
 
 export default class Web3Obj{
     private readonly ganacheServer = "http://127.0.0.1:9545/";
@@ -44,5 +46,23 @@ export default class Web3Obj{
             smartContractJSON.abi, 
             contarctAddress
         );
+    }
+
+    static async contract(contractJSON:any):Promise<Contract|unknown>{
+        try{
+            let web3Obj = new Web3Obj();
+            if(!Web3Obj.web3){
+                let web3 = await web3Obj.initWeb3()
+                Web3Obj.web3 = web3;
+            }
+            return await web3Obj.initContract(contractJSON);
+        }catch(e){
+            swal({
+                title:"Ooops!!!",
+                text:"Erro ao conectar na blockchain",
+                icon:"error"
+            });
+            return e
+        }
     }
 }

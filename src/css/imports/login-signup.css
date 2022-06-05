@@ -6,7 +6,7 @@
     margin: 5rem auto;
     border-radius: 5px;
 }
-.form-login .form-title {
+.form-login .form-title,.form-signup .form-title {
     font-size: 3rem;
     padding: 1rem;
     color: rgb(141, 141, 141);

@@ -5,7 +5,7 @@ export default function tabCreateCampain(){
                 <div class="form-group control-name-campain">
                     <label for="name">Nome da campanha</label>
                     <input type="text" class="form-control" name="name">
-                    <div class="form-feedback">Feedback aqui</div>
+                    <div class="form-feedback"></div>
                 </div>
                 <div class="form-group-inline">
                     <div class="form-group">
@@ -14,13 +14,13 @@ export default function tabCreateCampain(){
                         <div class="form-feedback"></div>
                     </div>
                     <div class="form-group">
-                        <label for="totalViews">Meta total Views</label>
-                        <input type="number" min="1" class="form-control" name="totalViews">
+                        <label for="goalview">Meta total Views</label>
+                        <input type="number" min="1" class="form-control" name="goalview">
                         <div class="form-feedback"></div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="description">Meta total Views</label>
+                    <label for="description">Descrição</label>
                     <textarea class="form-control" name="description"></textarea>
                     <div class="form-feedback"></div>
                 </div>

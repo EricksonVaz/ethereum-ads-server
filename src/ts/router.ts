@@ -59,9 +59,7 @@ export default class Router {
 
     public navigateTo(pathName:string){
         if(pathName==="/logout"){
-            User.logOut();
-            
-            this.renderPage(this.basePath);
+            Router.actionLogout();
         }else if(this.isFirstLoad || window.location.pathname!=pathName){
             this.updateUrl(pathName);
             let routeFound = this.loadRoute(pathName);
@@ -116,5 +114,11 @@ export default class Router {
                 }
             });
         });
+    }
+
+    public static actionLogout(pathName=Router.router.basePath){
+        let router = Router.router;
+        User.logOut();
+        router.renderPage(pathName);
     }
 }
