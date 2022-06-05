@@ -6,6 +6,7 @@ import navMenu from "./partials/navMenu";
 import signupForm from "./partials/signupForm";
 import swal from "sweetalert";
 import IFormError from "../utils/interfaces/iFormError";
+import { hideLoader, showLoader } from "./partials/loader/loaderInit";
 
 export default class PageSignup extends PageBase{
     static readonly rootPageId = "signup-page";
@@ -32,25 +33,30 @@ export default class PageSignup extends PageBase{
 
             let formData = new FormData(this.formSignup);
 
-            let respSignup = new User(formData).signup();
-            if(Array.isArray(respSignup)){
-                formSetFeedback(this.formSignup!,respSignup)
-            }else{
-                console.log("user created", respSignup);
-                let {email,password} = respSignup;
+            showLoader();
+            
+            new User(formData).signup().then(respSignup=>{
+                if(Array.isArray(respSignup)){
+                    formSetFeedback(this.formSignup!,respSignup)
+                }else{
+                    console.log("user created", respSignup);
+                    let {email,password} = respSignup;
 
-                try{
-                    PageLogin.actionLogin(email,password);
-                }catch(err){
-                    let errorObj = err as IFormError[];
-                    console.log("error try login afert signup",errorObj);
-                    swal({
-                        title:"Opps!!",
-                        text:errorObj[0].errorFeedback,
-                        icon:"error"
-                    })
+                    try{
+                        PageLogin.actionLogin(email,password);
+                    }catch(err){
+                        let errorObj = err as IFormError[];
+                        console.log("error try login afert signup",errorObj);
+                        swal({
+                            title:"Opps!!",
+                            text:errorObj[0].errorFeedback,
+                            icon:"error"
+                        })
+                    }
                 }
-            }
+            }).finally(()=>{
+                hideLoader();
+            });
         });
     }
 }

@@ -5,6 +5,7 @@ import User from "../models/user";
 import formSetFeedback from "../utils/formSetFeedback";
 import Router from "../router";
 import IFormError from "../utils/interfaces/iFormError";
+import { hideLoader, showLoader } from "./partials/loader/loaderInit";
 
 export default class PageLogin extends PageBase{
     static readonly rootPageId = "login-page";
@@ -33,17 +34,18 @@ export default class PageLogin extends PageBase{
             let email = formData.get("email") as string
             let password = formData.get("password") as string;
 
-            try{
-                PageLogin.actionLogin(email,password);
-            }catch(err){
+            showLoader();
+
+            PageLogin.actionLogin(email,password)
+            .catch(err=>{
                 let errorObj = err as IFormError[];
                 formSetFeedback(this.formLogin!,errorObj);
-            }
+            }).finally(hideLoader);
         });
     }
 
-    static actionLogin(email:string,password:string){
-        let errorObj = User.login(email,password);
+    static async actionLogin(email:string,password:string){
+        let errorObj = await User.login(email,password);
 
         if(errorObj.length)throw errorObj;
 

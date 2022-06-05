@@ -2,6 +2,8 @@ export default class ManageStorage{
     static saveValue(key:string,value:string,storageType="local"){
         if(storageType==="local") localStorage.setItem(key,value);
         else sessionStorage.setItem(key,value);
+
+        console.log(key,value);
     }
 
     static getValueSaved(key:string,storageType="local"):string{
