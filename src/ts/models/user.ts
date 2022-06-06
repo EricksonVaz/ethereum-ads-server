@@ -77,7 +77,7 @@ export default class User extends FormBaseModal{
                 console.log(e);
                 return [{
                     formControl:"email",
-                    errorFeedback:"erro ao resgistar na blockchain",
+                    errorFeedback:"erro ao conectar na blockchain",
                     currentValue:this.email
                 }];
             });
