@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.5.16;
+pragma experimental ABIEncoderV2;
 
 //contract for user login and signup using struct
 contract Campaings {
@@ -23,7 +24,7 @@ contract Campaings {
         uint256 _user
     ) public {
         campaings.push(
-            Campaing(nextIdUser, _name, _tvm, _goalview, _description, 0, _user)
+            Campaing(nextId, _name, _tvm, _goalview, _description, 0, _user)
         );
         nextId++;
     }
@@ -91,13 +92,23 @@ contract Campaings {
         view
         returns (Campaing[] memory)
     {
-        Campaing[] activeCampaings;
+        Campaing[] memory activeCampaings;
+        uint256 n = 0;
         for (uint256 i = 0; i < campaings.length; i++) {
             if (
                 campaings[i].user == idUser &&
                 campaings[i].totalview < campaings[i].goalview
             ) {
-                activeCampaings.push(campaings[i]);
+                activeCampaings[n] = Campaing(
+                    campaings[i].id,
+                    campaings[i].name,
+                    campaings[i].tvm,
+                    campaings[i].goalview,
+                    campaings[i].description,
+                    campaings[i].totalview,
+                    campaings[i].user
+                );
+                n++;
             }
         }
 
@@ -109,13 +120,22 @@ contract Campaings {
         view
         returns (Campaing[] memory)
     {
-        Campaing[] inactiveCampaings;
+        Campaing[] memory inactiveCampaings;
+        uint256 n = 0;
         for (uint256 i = 0; i < campaings.length; i++) {
             if (
                 campaings[i].user == idUser &&
                 campaings[i].totalview >= campaings[i].goalview
             ) {
-                inactiveCampaings.push(campaings[i]);
+                inactiveCampaings[n] = Campaing(
+                    campaings[i].id,
+                    campaings[i].name,
+                    campaings[i].tvm,
+                    campaings[i].goalview,
+                    campaings[i].description,
+                    campaings[i].totalview,
+                    campaings[i].user
+                );
             }
         }
 
@@ -158,7 +178,7 @@ contract Campaings {
         }
     }
 
-    function getTotalView(uint256 _id) internal pure returns (uint256) {
+    function getTotalView(uint256 _id) internal view returns (uint256) {
         for (uint256 i = 0; i < campaings.length; i++) {
             if (campaings[i].id == _id) {
                 return campaings[i].totalview;
