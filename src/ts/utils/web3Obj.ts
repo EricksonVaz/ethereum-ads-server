@@ -13,6 +13,7 @@ export default class Web3Obj{
             let {ethereum=undefined,web3=undefined} = window;
 
             if(ethereum) {
+                console.log("ethereun")
                 //const web3 = new Web3(ethereum);
                 ethereum.enable()
                 .then(() => {
@@ -26,10 +27,12 @@ export default class Web3Obj{
                 return;
             }
             if(web3) {
+                console.log("old")
                 return resolve(
                     new Web3(web3.currentProvider)
                 );
             }
+            console.log("ganache")
             resolve(new Web3('http://localhost:9545'));
         });
     }
@@ -41,7 +44,8 @@ export default class Web3Obj{
         .address;
         console.log("contract address",contarctAddress);
         
-        Web3Obj.accounts = await Web3Obj.web3!.eth.getAccounts()
+        Web3Obj.accounts = await Web3Obj.web3!.eth.getAccounts();
+        console.log("contract chain id",Web3Obj.web3?.eth.getChainId());
         return new Web3Obj.web3!.eth.Contract(
             smartContractJSON.abi, 
             contarctAddress

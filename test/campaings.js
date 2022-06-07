@@ -11,6 +11,8 @@ contract("Campaings",()=>{
         await campaings.create("Camapanha 2",12,2,"descricao test",2);
         await campaings.create("Camapanha 3",12,2,"descricao test",1);
         const campaing = await campaings.findById(1);
+        let balance = await campaings.balance();
+        console.log(balance.toString());
         assert(campaing[0].toNumber() === 1);
         assert(campaing[1] === "Camapanha 1");
         assert(campaing[2].toNumber() === 12);
@@ -70,15 +72,15 @@ contract("Campaings",()=>{
     });
 
     it("Should watch Campaing 2x",async ()=>{
-        await campaings.watchCampaign(1,1);
-        await campaings.watchCampaign(1,1);
+        await campaings.watchCampaign(1,1,"0xfccf283f83d7bd7c302913623bec4314064ea44b");
+        await campaings.watchCampaign(1,1,"0xfccf283f83d7bd7c302913623bec4314064ea44b");
         const campaing = await campaings.findById(1);
         assert(campaing[5].toNumber() === 2);
     });
 
     it("Should NOT watch Campaing",async ()=>{
         try {
-            await campaings.watchCampaign(1,2);
+            await campaings.watchCampaign(1,2,"0xfccf283f83d7bd7c302913623bec4314064ea44b");
         } catch(e) {
             assert(e.message.includes("Nao pode assistir campanha"));
             return;

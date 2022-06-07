@@ -15,7 +15,7 @@ export default class Campaigns extends FormBaseModal{
     private goalView:string = "";
     private description:string = "";
     private user:string = "";
-    private static readonly GAS = 200000;
+    private static readonly GAS = 2000000;
 
     constructor(protected formData:FormData,id="",private action="create"){
         super(formData);
@@ -138,8 +138,9 @@ export default class Campaigns extends FormBaseModal{
             let contractCampaign = contractResp as Contract;
             try{
                 await contractCampaign.methods
-                .watchCampaign(idCampaing,userLogged!.id)
+                .watchCampaign(idCampaing,userLogged!.id,Web3Obj.accounts[0])
                 .send({from: Web3Obj.accounts[0],gas: Campaigns.GAS});
+                console.log("send from",Web3Obj.accounts[0]);
 
                 return true;
             }catch(e){
@@ -248,7 +249,7 @@ export default class Campaigns extends FormBaseModal{
             let contractCampaign = contractResp as Contract;
             try{
                 let campaingFind = await contractCampaign.methods
-                .findById(idCampaing)
+                .findValidCampaing(idCampaing,userLogged!.id)
                 .call();
 
                 let {0:id,1:name,2:tvm,3:goalview,4:description,5:totalview,6:user} = campaingFind;

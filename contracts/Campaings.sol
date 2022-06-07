@@ -16,6 +16,12 @@ contract Campaings {
     Campaing[] public campaings;
     uint256 public nextId = 1;
 
+    //uint256 public balance = address(this).balance;
+
+    function balance() public view returns (uint256) {
+        return address(this).balance;
+    }
+
     //test done
     function create(
         string memory _name,
@@ -46,6 +52,38 @@ contract Campaings {
     {
         for (uint256 i = 0; i < campaings.length; i++) {
             if (campaings[i].id == _id) {
+                return (
+                    campaings[i].id,
+                    campaings[i].name,
+                    campaings[i].tvm,
+                    campaings[i].goalview,
+                    campaings[i].description,
+                    campaings[i].totalview,
+                    campaings[i].user
+                );
+            }
+        }
+        revert("Campanha nao existe");
+    }
+
+    function findValidCampaing(uint256 _id, uint256 _userId)
+        public
+        view
+        returns (
+            uint256,
+            string memory,
+            uint256,
+            uint256,
+            string memory,
+            uint256,
+            uint256
+        )
+    {
+        for (uint256 i = 0; i < campaings.length; i++) {
+            if (
+                (campaings[i].id == _id && campaings[i].user != _userId) &&
+                campaings[i].totalview < campaings[i].goalview
+            ) {
                 return (
                     campaings[i].id,
                     campaings[i].name,
@@ -114,7 +152,9 @@ contract Campaings {
     }
 
     function listAllCampainActive() public view returns (Campaing[] memory) {
-        Campaing[] memory activeCampaings = new Campaing[](campaings.length);
+        Campaing[] memory activeCampaings = new Campaing[](
+            totalActiveCampaing()
+        );
         uint256 n = 0;
         for (uint256 i = 0; i < campaings.length; i++) {
             if (campaings[i].totalview < campaings[i].goalview) {
@@ -171,13 +211,20 @@ contract Campaings {
     }
 
     //test done
-    function watchCampaign(uint256 _id, uint256 _idUser) public {
+    function watchCampaign(
+        uint256 _id,
+        uint256 _idUser,
+        address payable _seller
+    ) public {
         uint256 currentTotalView = getTotalView(_id);
 
-        for (uint256 i = 0; i < campaings.length; i++) {
-            if (campaings[i].id == _id && campaings[i].user != _idUser) {
-                campaings[i].totalview = ++currentTotalView;
-                return;
+        if (true) {
+            for (uint256 i = 0; i < campaings.length; i++) {
+                if (campaings[i].id == _id && campaings[i].user != _idUser) {
+                    campaings[i].totalview = ++currentTotalView;
+                    payWatch(_seller);
+                    return;
+                }
             }
         }
 
@@ -240,6 +287,16 @@ contract Campaings {
         return n;
     }
 
+    function totalActiveCampaing() internal view returns (uint256) {
+        uint256 n = 0;
+        for (uint256 i = 0; i < campaings.length; i++) {
+            if (campaings[i].totalview < campaings[i].goalview) {
+                n++;
+            }
+        }
+        return n;
+    }
+
     function totalActiveCampaingFromDiferentUsers(uint256 idUser)
         internal
         view
@@ -272,6 +329,10 @@ contract Campaings {
             }
         }
         return n;
+    }
+
+    function payWatch(address payable _seller) internal {
+        _seller.transfer(1 ether);
     }
 
     function convert(string memory value) internal pure returns (bytes32) {

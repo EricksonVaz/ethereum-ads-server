@@ -14,6 +14,7 @@ export default class PageIndex extends PageBase{
     static readonly rootPageId = "index-page";
     private pubListContainer?:HTMLDivElement;
     private static pageIndex?:PageIndex;
+    private idInterval?:NodeJS.Timeout;
     constructor(){
         super(PageIndex.rootPageId);
     }
@@ -84,7 +85,7 @@ export default class PageIndex extends PageBase{
                 let timeCount = 0;
                 let idBtnEarn = Math.random().toString(16);
                 let tvm = <unknown>resp.tvm as number;
-                let idInterval = setInterval(()=>{
+                this.idInterval = setInterval(()=>{
                     timeCount++;
                     if(timeCount>=(+resp.tvm)){
                         modalDesc.querySelector(".container-earn")!.innerHTML = `
@@ -92,7 +93,7 @@ export default class PageIndex extends PageBase{
                                 Click To Earn
                             </button>
                         `;
-                        clearInterval(idInterval);
+                        clearInterval(this.idInterval);
                         return;
                     }
                     modalDesc.querySelector(".container-earn")!.innerHTML = `
@@ -101,36 +102,8 @@ export default class PageIndex extends PageBase{
                         </button>
                     `;
                 },1000);
-                modalDesc.addEventListener("click",(e)=>{
-                    let elementClicked = e.target as HTMLElement;
-                    if(elementClicked.classList.contains(`btn-${idBtnEarn}`)){
-                        showLoader();
-                        Campaigns.watchCampaing(id)
-                        .then((resp)=>{
-                            if(resp==true){
-                                this.loadListPub();
-                                swal({
-                                    title: "Feito!!!",
-                                    text: "Obrigado por assistir esta campanha",
-                                    icon: "success",
-                                });
-                            }else{
-                                swal({
-                                    title: "Erro!!!",
-                                    text: "Não foi possivel assistir a campanha",
-                                    icon: "error",
-                                });
-                            }
-                        })
-                        .catch(console.log)
-                        .finally(()=>{
-                            hideLoader()
-                            hideBackDrop()
-                            hideModalMoreDetails();
-                        });
-                    }
-                })
-                
+
+                this.actionWatchCampaing(modalDesc,idBtnEarn,id);
             }else{
                 modalTitle.innerHTML = "";
                 modalDesc.innerHTML = "Erro ao carregar a campanha";
@@ -140,6 +113,38 @@ export default class PageIndex extends PageBase{
         .finally(()=>{
             hideLoader();
             showBackDrop();
+        });
+    }
+
+    private actionWatchCampaing(modalDesc:Element,idBtnEarn:string,id:number){
+        modalDesc.addEventListener("click",(e)=>{
+            let elementClicked = e.target as HTMLElement;
+            if(elementClicked.classList.contains(`btn-${idBtnEarn}`)){
+                showLoader();
+                Campaigns.watchCampaing(id)
+                .then((resp)=>{
+                    if(resp==true){
+                        this.loadListPub();
+                        swal({
+                            title: "Feito!!!",
+                            text: "Obrigado por assistir esta campanha",
+                            icon: "success",
+                        });
+                    }else{
+                        swal({
+                            title: "Erro!!!",
+                            text: "Não foi possivel assistir a campanha",
+                            icon: "error",
+                        });
+                    }
+                })
+                .catch(console.log)
+                .finally(()=>{
+                    hideLoader()
+                    hideBackDrop()
+                    hideModalMoreDetails();
+                });
+            }
         });
     }
 }
