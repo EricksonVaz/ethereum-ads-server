@@ -280,13 +280,21 @@ export default class PagePanel extends PageBase{
             if (willDelete) {
                 showLoader();
                 Campaigns.deleteCampaing(id)
-                .then(()=>{
-                    swal({
-                        title: "Feito",
-                        text: "Campanha exluida com sucesso",
-                        icon: "success",
-                    });
-                    this.refreshListCampaing();
+                .then((resp)=>{
+                    if(resp==true){
+                        swal({
+                            title: "Feito",
+                            text: "Campanha exluida com sucesso",
+                            icon: "success",
+                        });
+                        this.refreshListCampaing();
+                    }else{
+                        swal({
+                            title: "Erro!!!",
+                            text: "Não foi possivel deletar a campanha",
+                            icon: "error",
+                        });
+                    }
                 })
                 .catch(console.log)
                 .finally(hideLoader);

@@ -15,6 +15,7 @@ export default class User extends FormBaseModal{
     public password:string = "";
     private passwordHashed:string = "";
     private confirm:string = "";
+    private static readonly GAS = 200000;
     //private static contractJson = new URL("../../../build/contracts/Users.json",import.meta.url);
 
     private readonly regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -52,7 +53,7 @@ export default class User extends FormBaseModal{
                     try{
                         await contractUser.methods
                         .signup(this.email,this.passwordHashed)
-                        .send({from: Web3Obj.accounts[0],gas: 200000});
+                        .send({from: Web3Obj.accounts[0],gas: User.GAS});
 
                         let idUserRegister = await contractUser.methods.nextIdUser().call();
                         this.idUser = idUserRegister;

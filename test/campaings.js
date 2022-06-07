@@ -9,6 +9,7 @@ contract("Campaings",()=>{
     it("Should create new Campaing",async ()=>{
         await campaings.create("Camapanha 1",12,2,"descricao test",2);
         await campaings.create("Camapanha 2",12,2,"descricao test",2);
+        await campaings.create("Camapanha 3",12,2,"descricao test",1);
         const campaing = await campaings.findById(1);
         assert(campaing[0].toNumber() === 1);
         assert(campaing[1] === "Camapanha 1");
@@ -32,7 +33,7 @@ contract("Campaings",()=>{
 
     it("Should NOT find Campaing by id",async ()=>{
         try {
-            await campaings.findById(3);
+            await campaings.findById(4);
         } catch(e) {
             assert(e.message.includes("Campanha nao existe"));
             return;
@@ -42,7 +43,7 @@ contract("Campaings",()=>{
 
     it("Should NOT find Campaing by user and id",async ()=>{
         try {
-            await campaings.findByUserAndId(3,1);
+            await campaings.findByUserAndId(4,1);
         } catch(e) {
             assert(e.message.includes("Campanha nao encontrada"));
             return;
@@ -53,14 +54,19 @@ contract("Campaings",()=>{
     it("Should list active Campaings",async ()=>{
         const campaingsList = await campaings.listAllCampainActiveByUser(2);
         const campaing = campaingsList[0];
-        //const campaing2 = campaingsList[1];
         assert(campaing[0][0] == 1);
-        // assert(campaing[1] === "Camapanha 1");
-        // assert(campaing[2].toNumber() === 12);
-        // assert(campaing[3].toNumber() === 2);
-        // assert(campaing[4] === "descricao test");
-        // assert(campaing[5].toNumber() === 0);
-        // assert(campaing[6].toNumber() === 2);
+    });
+
+    it("Should list all active Campaings",async ()=>{
+        const campaingsList = await campaings.listAllCampainActive();
+        const totalCampaing = campaingsList.length;
+        assert(totalCampaing == 3);
+    });
+
+    it("Should list all active Campaings from diferent users",async ()=>{
+        const campaingsList = await campaings.listAllCampainActiveFromDiferentUsers(1);
+        const totalCampaing = campaingsList.length;
+        assert(totalCampaing == 2);
     });
 
     it("Should watch Campaing 2x",async ()=>{
@@ -80,16 +86,16 @@ contract("Campaings",()=>{
         assert(false);
     });
 
+    it("Should list 1 active Campaings from diferent users after watch",async ()=>{
+        const campaingsList = await campaings.listAllCampainActiveFromDiferentUsers(1);
+        const totalCampaing = campaingsList.length;
+        assert(totalCampaing == 1);
+    });
+
     it("Should list inactive Campaings",async ()=>{
         const campaingsList = await campaings.listAllCampainInactiveByUser(2);
         const campaing = campaingsList[0];
         assert(campaing[0][0] == 1);
-        // assert(campaing[1] === "Camapanha 1");
-        // assert(campaing[2].toNumber() === 12);
-        // assert(campaing[3].toNumber() === 2);
-        // assert(campaing[4] === "descricao test");
-        // assert(campaing[5].toNumber() === 2);
-        // assert(campaing[6].toNumber() === 2);
     });
 
     it("Should update Campaing",async ()=>{

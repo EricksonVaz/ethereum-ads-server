@@ -36,7 +36,7 @@ export default class Router {
         });
     }
 
-    private onNavClickLink(e:Event){
+    onNavClickLink(e:Event){
         this.isFirstLoad=false;
         this.navigateOnLinkItemClicked(e);
     }

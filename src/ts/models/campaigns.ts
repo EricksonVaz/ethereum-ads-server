@@ -15,6 +15,7 @@ export default class Campaigns extends FormBaseModal{
     private goalView:string = "";
     private description:string = "";
     private user:string = "";
+    private static readonly GAS = 200000;
 
     constructor(protected formData:FormData,id="",private action="create"){
         super(formData);
@@ -53,7 +54,7 @@ export default class Campaigns extends FormBaseModal{
             try{
                 await contractCampaign.methods
                 .create(this.name,+this.tvm,+this.goalView,this.description,+this.user)
-                .send({from: Web3Obj.accounts[0],gas: 2000000});
+                .send({from: Web3Obj.accounts[0],gas: Campaigns.GAS});
 
                 let idCampaignRegister = await contractCampaign.methods.nextId().call();
                 this.id = ""+(idCampaignRegister - 1);
@@ -81,7 +82,7 @@ export default class Campaigns extends FormBaseModal{
             try{
                 await contractCampaign.methods
                 .update(+this.id,this.name,+this.tvm,+this.goalView,this.description,+this.user)
-                .send({from: Web3Obj.accounts[0],gas: 2000000});
+                .send({from: Web3Obj.accounts[0],gas: Campaigns.GAS});
 
                 return this;
             }catch(e){
@@ -99,18 +100,7 @@ export default class Campaigns extends FormBaseModal{
         });
     }
 
-    static exceptionUserNotLogged(){
-        swal({
-            title: "User não logado",
-            text: "Por favor efectue o login novamente",
-            icon: "warning",
-        }).then((willDelete) => {
-            Router.actionLogout("/login");
-        });
-        return new Error("User not logged");
-    }
-
-    static async listActiveCampaing():Promise<ICampaings[]|IFormError[]>{
+    static async deleteCampaing(idCampaing:number):Promise<true|IFormError[]>{
         let userLogged = User.userLogged();
         if(!userLogged){
             throw Campaigns.exceptionUserNotLogged();
@@ -119,13 +109,13 @@ export default class Campaigns extends FormBaseModal{
         .then(async (contractResp)=>{
             let contractCampaign = contractResp as Contract;
             try{
-                let respListInactiveCampaings = await contractCampaign.methods
-                .listAllCampainActiveByUser(userLogged!.id)
-                .call();
+                await contractCampaign.methods
+                .destroy(idCampaing,userLogged!.id)
+                .send({from: Web3Obj.accounts[0],gas: Campaigns.GAS});
 
-                return Campaigns.trasformValueFromBlockchain((respListInactiveCampaings as any[]));
+                return true;
             }catch(e){
-                return Campaigns.feedBackErrorFromSmartContract(e,"Erro ao listar valores da blockchain")
+                return Campaigns.feedBackErrorFromSmartContract(e,"Erro ao tentar deletar a campanha da blockchain");
             }
         })
         .catch((e)=>{
@@ -135,6 +125,48 @@ export default class Campaigns extends FormBaseModal{
                 errorFeedback:"erro ao conectar na blockchain",
                 currentValue:""
             }];
+        });
+    }
+
+    static async watchCampaing(idCampaing:number):Promise<true|IFormError[]>{
+        let userLogged = User.userLogged();
+        if(!userLogged){
+            throw Campaigns.exceptionUserNotLogged();
+        }
+        return Web3Obj.contract(CampaignContractJson)
+        .then(async (contractResp)=>{
+            let contractCampaign = contractResp as Contract;
+            try{
+                await contractCampaign.methods
+                .watchCampaign(idCampaing,userLogged!.id)
+                .send({from: Web3Obj.accounts[0],gas: Campaigns.GAS});
+
+                return true;
+            }catch(e){
+                return Campaigns.feedBackErrorFromSmartContract(e,"Erro ao tentar assistir a campanha no blockchain");
+            }
+        })
+        .catch((e)=>{
+            console.log(e);
+            return [{
+                formControl:"name",
+                errorFeedback:"erro ao conectar na blockchain",
+                currentValue:""
+            }];
+        });
+    }
+
+    static async listActiveCampaing():Promise<ICampaings[]|IFormError[]>{
+        let userLogged = User.userLogged();
+        if(!userLogged){
+            throw Campaigns.exceptionUserNotLogged();
+        }
+        return await Campaigns.listAllValidCaimpaingsCB(async (contractCampaign:Contract)=>{
+            let respListActiveCampaings = await contractCampaign.methods
+            .listAllCampainActiveByUser(userLogged!.id)
+            .call();
+
+            return Campaigns.trasformValueFromBlockchain((respListActiveCampaings as any[]));
         });
     }
 
@@ -143,27 +175,37 @@ export default class Campaigns extends FormBaseModal{
         if(!userLogged){
             throw Campaigns.exceptionUserNotLogged();
         }
-        return Web3Obj.contract(CampaignContractJson)
-        .then(async (contractResp)=>{
-            let contractCampaign = contractResp as Contract;
-            try{
+        return await Campaigns.listAllValidCaimpaingsCB(async (contractCampaign:Contract)=>{
+            let respListInactiveCampaings = await contractCampaign.methods
+            .listAllCampainInactiveByUser(userLogged!.id)
+            .call();
+
+            return Campaigns.trasformValueFromBlockchain((respListInactiveCampaings as any[]));
+        });
+    }
+
+    static async listAllValidCaimpaings():Promise<ICampaings[]|IFormError[]>{
+        if(User.isUserLogged()){
+            let userLogged = User.userLogged();
+            if(!userLogged){
+                throw Campaigns.exceptionUserNotLogged();
+            }
+            return await Campaigns.listAllValidCaimpaingsCB(async (contractCampaign:Contract)=>{
                 let respListActiveCampaings = await contractCampaign.methods
-                .listAllCampainInactiveByUser(userLogged!.id)
+                .listAllCampainActiveFromDiferentUsers(userLogged!.id)
                 .call();
 
                 return Campaigns.trasformValueFromBlockchain((respListActiveCampaings as any[]));
-            }catch(e){
-                return Campaigns.feedBackErrorFromSmartContract(e,"Erro ao listar valores da blockchain")
-            }
-        })
-        .catch((e)=>{
-            console.log(e);
-            return [{
-                formControl:"name",
-                errorFeedback:"erro ao conectar na blockchain",
-                currentValue:""
-            }];
-        });
+            });
+        }else{
+            return await Campaigns.listAllValidCaimpaingsCB(async (contractCampaign:Contract)=>{
+                let respListActiveCampaings = await contractCampaign.methods
+                .listAllCampainActive()
+                .call();
+
+                return Campaigns.trasformValueFromBlockchain((respListActiveCampaings as any[]));
+            });
+        }
     }
 
     static async getCampaingInfoByUser(idCampaing:number):Promise<ICampaings|IFormError[]>{
@@ -196,7 +238,7 @@ export default class Campaigns extends FormBaseModal{
         });
     }
 
-    static async deleteCampaing(idCampaing:number):Promise<true|IFormError[]>{
+    static async getCampaingInfo(idCampaing:number):Promise<ICampaings|IFormError[]>{
         let userLogged = User.userLogged();
         if(!userLogged){
             throw Campaigns.exceptionUserNotLogged();
@@ -205,13 +247,15 @@ export default class Campaigns extends FormBaseModal{
         .then(async (contractResp)=>{
             let contractCampaign = contractResp as Contract;
             try{
-                await contractCampaign.methods
-                .destroy(idCampaing,userLogged!.id)
-                .send({from: Web3Obj.accounts[0],gas: 200000});
+                let campaingFind = await contractCampaign.methods
+                .findById(idCampaing)
+                .call();
 
-                return true;
+                let {0:id,1:name,2:tvm,3:goalview,4:description,5:totalview,6:user} = campaingFind;
+
+                return (<unknown>{id,name,tvm,goalview,description,totalview,user}) as ICampaings;
             }catch(e){
-                return Campaigns.feedBackErrorFromSmartContract(e,"Erro ao tentar deletar a campanha da blockchain");
+                return Campaigns.feedBackErrorFromSmartContract(e,"Erro ao retornar campanha da blockchain");
             }
         })
         .catch((e)=>{
@@ -222,6 +266,37 @@ export default class Campaigns extends FormBaseModal{
                 currentValue:""
             }];
         });
+    }
+
+    private static async listAllValidCaimpaingsCB(callback:Function){
+        return Web3Obj.contract(CampaignContractJson)
+            .then(async (contractResp)=>{
+                let contractCampaign = contractResp as Contract;
+                try{
+                    return callback(contractCampaign) as ICampaings[];
+                }catch(e){
+                    return Campaigns.feedBackErrorFromSmartContract(e,"Erro ao listar valores da blockchain")
+                }
+            })
+            .catch((e)=>{
+                console.log(e);
+                return [{
+                    formControl:"name",
+                    errorFeedback:"erro ao conectar na blockchain",
+                    currentValue:""
+                }];
+            });
+    }
+
+    private static exceptionUserNotLogged(){
+        swal({
+            title: "User não logado",
+            text: "Por favor efectue o login novamente",
+            icon: "warning",
+        }).then((willDelete) => {
+            Router.actionLogout("/login");
+        });
+        return new Error("User not logged");
     }
 
     protected validateFormData(): void {

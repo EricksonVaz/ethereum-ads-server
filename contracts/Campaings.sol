@@ -113,6 +113,41 @@ contract Campaings {
         return activeCampaings;
     }
 
+    function listAllCampainActive() public view returns (Campaing[] memory) {
+        Campaing[] memory activeCampaings = new Campaing[](campaings.length);
+        uint256 n = 0;
+        for (uint256 i = 0; i < campaings.length; i++) {
+            if (campaings[i].totalview < campaings[i].goalview) {
+                activeCampaings[n] = campaings[i];
+                n++;
+            }
+        }
+
+        return activeCampaings;
+    }
+
+    function listAllCampainActiveFromDiferentUsers(uint256 idUser)
+        public
+        view
+        returns (Campaing[] memory)
+    {
+        Campaing[] memory activeCampaings = new Campaing[](
+            totalActiveCampaingFromDiferentUsers(idUser)
+        );
+        uint256 n = 0;
+        for (uint256 i = 0; i < campaings.length; i++) {
+            if (
+                campaings[i].user != idUser &&
+                campaings[i].totalview < campaings[i].goalview
+            ) {
+                activeCampaings[n] = campaings[i];
+                n++;
+            }
+        }
+
+        return activeCampaings;
+    }
+
     //test done
     function listAllCampainInactiveByUser(uint256 idUser)
         public
@@ -197,6 +232,23 @@ contract Campaings {
         for (uint256 i = 0; i < campaings.length; i++) {
             if (
                 campaings[i].user == idUser &&
+                campaings[i].totalview < campaings[i].goalview
+            ) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    function totalActiveCampaingFromDiferentUsers(uint256 idUser)
+        internal
+        view
+        returns (uint256)
+    {
+        uint256 n = 0;
+        for (uint256 i = 0; i < campaings.length; i++) {
+            if (
+                campaings[i].user != idUser &&
                 campaings[i].totalview < campaings[i].goalview
             ) {
                 n++;
