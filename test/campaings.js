@@ -72,15 +72,15 @@ contract("Campaings",()=>{
     });
 
     it("Should watch Campaing 2x",async ()=>{
-        await campaings.watchCampaign(1,1,"0xfccf283f83d7bd7c302913623bec4314064ea44b");
-        await campaings.watchCampaign(1,1,"0xfccf283f83d7bd7c302913623bec4314064ea44b");
+        await campaings.watchCampaign(1,1);
+        await campaings.watchCampaign(1,1);
         const campaing = await campaings.findById(1);
         assert(campaing[5].toNumber() === 2);
     });
 
     it("Should NOT watch Campaing",async ()=>{
         try {
-            await campaings.watchCampaign(1,2,"0xfccf283f83d7bd7c302913623bec4314064ea44b");
+            await campaings.watchCampaign(1,2);
         } catch(e) {
             assert(e.message.includes("Nao pode assistir campanha"));
             return;

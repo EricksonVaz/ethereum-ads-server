@@ -3,6 +3,7 @@ import Campaigns from "../models/campaigns";
 import Router from "../router";
 import ICampaings from "../utils/interfaces/ICampaing";
 import IFormError from "../utils/interfaces/iFormError";
+import Web3Obj from "../utils/web3Obj";
 import PageBase from "./pageBase";
 import indexMainBody from "./partials/indexPage/indexMainBody";
 import indexPubCardTemplate from "./partials/indexPage/indexPubCardTemplate";
@@ -123,12 +124,14 @@ export default class PageIndex extends PageBase{
                 showLoader();
                 Campaigns.watchCampaing(id)
                 .then((resp)=>{
-                    if(resp==true){
+                    if(typeof resp == "string"){
                         this.loadListPub();
-                        swal({
-                            title: "Feito!!!",
-                            text: "Obrigado por assistir esta campanha",
-                            icon: "success",
+                        Web3Obj.sendETH(resp,()=>{
+                            swal({
+                                title: "Feito!!!",
+                                text: "Obrigado por assistir esta campanha",
+                                icon: "success",
+                            });
                         });
                     }else{
                         swal({

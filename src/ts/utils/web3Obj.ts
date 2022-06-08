@@ -69,4 +69,22 @@ export default class Web3Obj{
             return e
         }
     }
+
+    static sendETH(account:string,callback:Function|undefined = undefined){
+        Web3Obj.web3?.eth.accounts.signTransaction({
+            to:account,
+            value:"1000000000000000000",
+            gas:"200000"
+        },"2e688e7a5f1625dd837450b1720848936379bb37999fc7c72337142347f89da5",(err,res)=>{
+            console.log("error response",err);
+            console.log("result response",res);
+            if(res.rawTransaction)
+            Web3Obj.web3?.eth.sendSignedTransaction(res.rawTransaction,(err,res)=>{
+                console.log("error response 2",err);
+                console.log("result response 2",res);
+                if(callback) callback();
+            })
+            
+        });
+    }
 }

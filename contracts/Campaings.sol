@@ -211,20 +211,13 @@ contract Campaings {
     }
 
     //test done
-    function watchCampaign(
-        uint256 _id,
-        uint256 _idUser,
-        address payable _seller
-    ) public {
+    function watchCampaign(uint256 _id, uint256 _idUser) public {
         uint256 currentTotalView = getTotalView(_id);
 
-        if (true) {
-            for (uint256 i = 0; i < campaings.length; i++) {
-                if (campaings[i].id == _id && campaings[i].user != _idUser) {
-                    campaings[i].totalview = ++currentTotalView;
-                    payWatch(_seller);
-                    return;
-                }
+        for (uint256 i = 0; i < campaings.length; i++) {
+            if (campaings[i].id == _id && campaings[i].user != _idUser) {
+                campaings[i].totalview = ++currentTotalView;
+                return;
             }
         }
 

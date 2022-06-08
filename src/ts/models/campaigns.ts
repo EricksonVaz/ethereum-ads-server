@@ -128,7 +128,7 @@ export default class Campaigns extends FormBaseModal{
         });
     }
 
-    static async watchCampaing(idCampaing:number):Promise<true|IFormError[]>{
+    static async watchCampaing(idCampaing:number):Promise<string|IFormError[]>{
         let userLogged = User.userLogged();
         if(!userLogged){
             throw Campaigns.exceptionUserNotLogged();
@@ -138,11 +138,11 @@ export default class Campaigns extends FormBaseModal{
             let contractCampaign = contractResp as Contract;
             try{
                 await contractCampaign.methods
-                .watchCampaign(idCampaing,userLogged!.id,Web3Obj.accounts[0])
+                .watchCampaign(idCampaing,userLogged!.id)
                 .send({from: Web3Obj.accounts[0],gas: Campaigns.GAS});
                 console.log("send from",Web3Obj.accounts[0]);
 
-                return true;
+                return Web3Obj.accounts[0];
             }catch(e){
                 return Campaigns.feedBackErrorFromSmartContract(e,"Erro ao tentar assistir a campanha no blockchain");
             }
